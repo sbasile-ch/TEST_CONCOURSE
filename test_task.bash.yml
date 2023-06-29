@@ -15,4 +15,5 @@ run:
       ls -lrta
       pwd
       echo "done"
+      echo "aa is bb ${myvar}"
       echo "aa is bb ${myvar}" > A.txt
