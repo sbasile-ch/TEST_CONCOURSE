@@ -1,0 +1,18 @@
+platform: linux
+
+image_resource:
+  type: registry-image
+  source: {repository: golang}
+params:
+  myvar: "basile2"
+outputs:
+  - name: test_param
+run:
+  path: bash
+  args:
+    - -ec
+    - |
+      ls -lrta
+      pwd
+      echo "done"
+      echo "aa is bb ${myvar}" > A.txt
