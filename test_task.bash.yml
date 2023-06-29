@@ -17,4 +17,4 @@ run:
       pwd
       echo "done"
       echo "aa is bb ${myvar} ${myvar2}"
-      #echo "aa is bb ${myvar}" > A.txt
+      echo "aa is bb ${myvar}" > test_param/A.txt
