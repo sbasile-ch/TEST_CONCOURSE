@@ -5,6 +5,7 @@ image_resource:
   source: {repository: golang}
 params:
   myvar: "basile2"
+  myvar2: "basile3"
 outputs:
   - name: test_param
 run:
@@ -15,5 +16,5 @@ run:
       ls -lrta
       pwd
       echo "done"
-      echo "aa is bb ${myvar}"
-      echo "aa is bb ${myvar}" > A.txt
+      echo "aa is bb ${myvar} ${myvar2}"
+      #echo "aa is bb ${myvar}" > A.txt
