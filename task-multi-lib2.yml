@@ -32,11 +32,12 @@ run:
       concourse-resources/scripts/git/configure-user
     fi
     configure-maven
-    make -C source-code build local-deploy version="$(< version/version)" target_dir="${target_dir}"
+    make -C source-code build local-deploy version="$(< version/version)" target_dir="${target_dir}" id="rel11"
     cp -r source-code/${target_dir}/* artifacts
 
 params:
   GITHUB_PRIVATE_KEY:
+  target_dir: "target"
 
 caches:
   - path: .m2/
