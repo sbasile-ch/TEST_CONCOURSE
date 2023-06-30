@@ -7,7 +7,7 @@ image_resource:
   source:
     aws_access_key_id: ((aws-access-key-id))
     aws_secret_access_key: ((aws-secret-access-key))
-    repository: ((docker-registry))/((docker-image))
+    repository: ((docker-registry))/ci-open-jdk8-maven-build
     tag: latest
 
 inputs:
