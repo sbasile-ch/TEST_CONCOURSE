@@ -1,0 +1,42 @@
+---
+
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    aws_access_key_id: ((aws-access-key-id))
+    aws_secret_access_key: ((aws-secret-access-key))
+    repository: ((docker-registry))/((docker-image))
+    tag: latest
+
+inputs:
+  - name: concourse-resources
+    optional: true
+  - name: source-code
+  - name: version
+
+outputs:
+  - name: artifacts
+
+run:
+  path: bash
+  args:
+  - -ec
+  - |
+    if [[ ! -z "${GITHUB_PRIVATE_KEY}" ]]; then
+      if [[ ! -d concourse-resources ]]; then
+        echo "Error: concourse-resources is required for this action"
+        exit 1
+      fi
+      concourse-resources/scripts/git/configure-user
+    fi
+    configure-maven
+    make -C source-code build local-deploy version="$(< version/version)" target_dir="${target_dir}"
+    cp -r source-code/${target_dir}/* artifacts
+params:
+  GITHUB_PRIVATE_KEY:
+  target_dir: "target"
+
+caches:
+  - path: .m2/
