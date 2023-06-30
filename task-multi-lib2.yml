@@ -32,9 +32,8 @@ run:
       concourse-resources/scripts/git/configure-user
     fi
     configure-maven
-    make -C source-code build package version="$(< version/version)"
-    cp source-code/target/*.jar artifacts
-    cp source-code/pom.xml artifacts
+    make -C source-code build local-deploy version="$(< version/version)" target_dir="${target_dir}"
+    cp -r source-code/${target_dir}/* artifacts
 
 params:
   GITHUB_PRIVATE_KEY:
