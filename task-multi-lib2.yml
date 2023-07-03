@@ -32,7 +32,7 @@ run:
       concourse-resources/scripts/git/configure-user
     fi
     configure-maven
-    make -C source-code local-deploy version="$(< version/version)" target_dir="${target_dir}" id="rel11"
+    make -C source-code local-deploy version="$(< version/version)" target_dir="${target_dir}" id="${id}"
     echo "-----------------------------stef1"
     cp -r source-code/${target_dir}/* artifacts
     echo "-----------------------------stef2"
@@ -40,6 +40,7 @@ run:
 params:
   GITHUB_PRIVATE_KEY:
   target_dir: "target"
+  id: "ch-id"
 
 caches:
   - path: .m2/
