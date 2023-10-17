@@ -1,0 +1,57 @@
+---
+
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    aws_access_key_id: ((aws-access-key-id))
+    aws_secret_access_key: ((aws-secret-access-key))
+    repository: ((docker-registry))/ci-aws-cli-centos
+    tag: latest
+
+inputs:
+  - name: source-code
+
+params:
+  LOCALES_DIR: locales
+
+run:
+  path: bash
+  args:
+  - -ec
+  - |
+    errors=0
+
+    F_FG_RED="$(tput setaf 1)"
+    F_FG_GREEN="$(tput setaf 2)"
+    F_FG_CYAN="$(tput setaf 6)"
+    F_RESET="$(tput sgr0)"
+
+    function _jq_keys { jq -r 'keys | .[]'  $1 2>&1 | sort ;}
+    function _err  { printf "${F_FG_RED}${1}${F_RESET}\n" && errors=$((errors+1)); }
+    function _exit { printf "$errors errors.\n"; [ "$errors" -gt 0 ] && exit 1; exit 0; }
+
+    en_dir="${LOCALES_DIR}/en"
+    [ -d "$en_dir" ] || _err "missing English locales (expected: '${en_dir}')"
+
+
+    locales_list=$(find "$LOCALES_DIR"  -maxdepth 1 -type d  -mindepth 1 -not -name 'en' -exec basename "{}" \; )
+    json_list=$(find "$en_dir" -type f -name '*.json' -exec basename "{}" \;)
+
+    for l in $(echo "$locales_list"); do
+        echo "-------${F_FG_CYAN}checking locale: [$l]${F_RESET}"
+        for j in $(echo "$json_list"); do
+            f_en="${LOCALES_DIR}/en/${j}"
+            f_xx="${LOCALES_DIR}/${l}/${j}"
+            echo "---------------checking json: [${F_FG_GREEN}${j}${F_RESET}]"
+            if [ -e "${f_xx}" ]; then
+                diff=$(diff <(_jq_keys "${f_en}") <(_jq_keys "${f_xx}") 2>&1)
+                [ -n "$diff" ] && _err "check failed on '${j}':\n${diff}"
+            else
+                _err "missing file '${f_xx}'"
+            fi
+        done
+    done
+
+    _exit
